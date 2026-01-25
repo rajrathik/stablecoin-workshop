@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stablecoin Workshop | For Banking Professionals</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #0a0a0f;
+      min-height: 100vh;
+      color: #f1f5f9;
+      overflow-x: hidden;
+    }
+    
+    /* Animated background */
+    .bg-animation {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      background: 
+        radial-gradient(ellipse at 20% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 80%, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 60%);
+    }
+    
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    /* Header */
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    
+    .workshop-badge {
+      display: inline-block;
+      background: rgba(139, 92, 246, 0.2);
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      padding: 8px 20px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      color: #c4b5fd;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 24px;
+    }
+    
+    h1 {
+      font-size: 4rem;
+      font-weight: 200;
+      letter-spacing: -2px;
+      margin-bottom: 16px;
+      line-height: 1.1;
+    }
+    
+    h1 .highlight {
+      background: linear-gradient(135deg, #4ade80, #22d3ee, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 300;
+    }
+    
+    .tagline {
+      font-size: 1.4rem;
+      color: #94a3b8;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    
+    /* Module cards */
+    .modules-section {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    
+    .modules-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    
+    .modules-header h2 {
+      font-size: 1.2rem;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-weight: 400;
+    }
+    
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 50px;
+    }
+    
+    @media (max-width: 900px) {
+      .modules-grid {
+        grid-template-columns: 1fr;
+      }
+      h1 {
+        font-size: 2.5rem;
+      }
+    }
+    
+    .module-card {
+      background: rgba(30, 41, 59, 0.6);
+      border-radius: 24px;
+      padding: 32px;
+      border: 2px solid #334155;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      text-decoration: none;
+      display: block;
+    }
+    
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
+    }
+    
+    .module-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--accent);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+    }
+    
+    .module-card:hover::before {
+      transform: scaleX(1);
+    }
+    
+    .module-card.module-1 { --accent: #3b82f6; --accent-light: #60a5fa; }
+    .module-card.module-2 { --accent: #f59e0b; --accent-light: #fbbf24; }
+    .module-card.module-3 { --accent: #10b981; --accent-light: #34d399; }
+    .module-card.module-4 { --accent: #10b981; --accent-light: #34d399; }
+    .module-card.module-5 { --accent: #f59e0b; --accent-light: #fbbf24; }
+    .module-card.module-6 { --accent: #8b5cf6; --accent-light: #a78bfa; }
+    
+    .module-number {
+      font-size: 4rem;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 16px;
+      opacity: 0.15;
+      position: absolute;
+      top: 20px;
+      right: 24px;
+    }
+    
+    .module-card.module-1 .module-number { color: #3b82f6; }
+    .module-card.module-2 .module-number { color: #f59e0b; }
+    .module-card.module-3 .module-number { color: #10b981; }
+    .module-card.module-4 .module-number { color: #10b981; }
+    .module-card.module-5 .module-number { color: #f59e0b; }
+    .module-card.module-6 .module-number { color: #8b5cf6; }
+    
+    .module-icon {
+      font-size: 2.5rem;
+      margin-bottom: 16px;
+    }
+    
+    .module-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: #f1f5f9;
+    }
+    
+    .module-description {
+      font-size: 0.95rem;
+      color: #94a3b8;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    
+    .module-topics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .topic-tag {
+      background: rgba(255,255,255,0.05);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      color: #cbd5e1;
+    }
+    
+    .module-arrow {
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+    
+    .module-card:hover .module-arrow {
+      background: var(--accent);
+      transform: translateX(4px);
+    }
+    
+    /* Hands-on section */
+    .handson-section {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+      border: 2px solid rgba(139, 92, 246, 0.3);
+      border-radius: 24px;
+      padding: 40px;
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    .handson-section h3 {
+      font-size: 1.5rem;
+      color: #c4b5fd;
+      margin-bottom: 12px;
+    }
+    
+    .handson-section p {
+      color: #a5b4fc;
+      margin-bottom: 24px;
+      font-size: 1.05rem;
+    }
+    
+    .handson-steps {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    
+    .handson-step {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .step-number {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(139, 92, 246, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #c4b5fd;
+    }
+    
+    .step-text {
+      color: #e2e8f0;
+      font-size: 0.95rem;
+    }
+    
+    /* Footer */
+    footer {
+      text-align: center;
+      padding-top: 40px;
+      color: #64748b;
+      font-size: 0.9rem;
+    }
+    
+    .duration {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.05);
+      padding: 10px 20px;
+      border-radius: 30px;
+      margin-bottom: 12px;
+    }
+    
+    /* Start button animation */
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 20px rgba(74, 222, 128, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(74, 222, 128, 0.5); }
+    }
+    
+    .start-prompt {
+      position: fixed;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(16, 185, 129, 0.1);
+      border: 1px solid rgba(16, 185, 129, 0.4);
+      padding: 14px 28px;
+      border-radius: 40px;
+      color: #4ade80;
+      font-size: 0.95rem;
+      animation: pulse-glow 2s infinite;
+    }
+    
+    .start-prompt kbd {
+      background: rgba(16, 185, 129, 0.2);
+      padding: 4px 10px;
+      border-radius: 6px;
+      margin: 0 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-animation"></div>
+  
+  <div class="container">
+    <header>
+      <div class="workshop-badge">Interactive Workshop</div>
+      <h1>Understanding <span class="highlight">Stablecoins</span></h1>
+      <p class="tagline">A hands-on learning experience for banking professionals. Less slides, more doing.</p>
+    </header>
+    
+    <div class="modules-section">
+      <div class="modules-header">
+        <h2>Today's Journey</h2>
+      </div>
+      
+      <div class="modules-grid">
+        <a href="1-stablecoin-flow.html" class="module-card module-1">
+          <div class="module-number">01</div>
+          <div class="module-icon">🔄</div>
+          <div class="module-title">How Stablecoins Flow</div>
+          <div class="module-description">Trace a dollar from your bank account to USDC. Understand who does what — and who makes money where.</div>
+          <div class="module-topics">
+            <span class="topic-tag">On-ramps</span>
+            <span class="topic-tag">Circle</span>
+            <span class="topic-tag">Reserves</span>
+            <span class="topic-tag">Wallets</span>
+          </div>
+          <div class="module-arrow">→</div>
+        </a>
+        
+        <a href="2-wallets-vs-networks.html" class="module-card module-2">
+          <div class="module-number">02</div>
+          <div class="module-icon">⚡</div>
+          <div class="module-title">Wallets vs Networks</div>
+          <div class="module-description">Why are some transactions free and others cost $5? Understand the infrastructure layer.</div>
+          <div class="module-topics">
+            <span class="topic-tag">Ethereum</span>
+            <span class="topic-tag">Solana</span>
+            <span class="topic-tag">Fees</span>
+            <span class="topic-tag">Speed</span>
+          </div>
+          <div class="module-arrow">→</div>
+        </a>
+        
+        <a href="3-banking-comparison.html" class="module-card module-3">
+          <div class="module-number">03</div>
+          <div class="module-icon">🏦</div>
+          <div class="module-title">Banking Parallels</div>
+          <div class="module-description">Map everything you just learned to concepts you already know. Where's the disruption?</div>
+          <div class="module-topics">
+            <span class="topic-tag">SWIFT vs Solana</span>
+            <span class="topic-tag">Yield</span>
+            <span class="topic-tag">Fee Sandwich</span>
+          </div>
+          <div class="module-arrow">→</div>
+        </a>
+      </div>
+      
+      <div class="handson-section">
+        <h3>🛠️ Then: Hands-On Lab</h3>
+        <p>After the concepts, you'll create your own wallet and send real stablecoins</p>
+        <div class="handson-steps">
+          <div class="handson-step">
+            <div class="step-number">1</div>
+            <div class="step-text">Create Wallet</div>
+          </div>
+          <div class="handson-step">
+            <div class="step-number">2</div>
+            <div class="step-text">Receive USDC</div>
+          </div>
+          <div class="handson-step">
+            <div class="step-number">3</div>
+            <div class="step-text">Send to Partner</div>
+          </div>
+          <div class="handson-step">
+            <div class="step-number">4</div>
+            <div class="step-text">View on Blockchain</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Deep Dive Section -->
+      <div class="modules-header" style="margin-top: 50px;">
+        <h2>Deep Dive Topics</h2>
+      </div>
+      
+      <div class="modules-grid">
+        <a href="4-blockchain-explorer.html" class="module-card module-4">
+          <div class="module-number">04</div>
+          <div class="module-icon">🔍</div>
+          <div class="module-title">Blockchain Explorer Lab</div>
+          <div class="module-description">See real money moving globally in real-time. Learn to read the public ledger — no wallet required.</div>
+          <div class="module-topics">
+            <span class="topic-tag">Etherscan</span>
+            <span class="topic-tag">Transactions</span>
+            <span class="topic-tag">Transparency</span>
+          </div>
+          <div class="module-arrow">→</div>
+        </a>
+        
+        <a href="5-miners-validators.html" class="module-card module-5">
+          <div class="module-number">05</div>
+          <div class="module-icon">⛏️</div>
+          <div class="module-title">Miners & Validators</div>
+          <div class="module-description">Who processes transactions and how they get paid. The "staff" that runs blockchain — explained in banking terms.</div>
+          <div class="module-topics">
+            <span class="topic-tag">Gas Fees</span>
+            <span class="topic-tag">Proof of Stake</span>
+            <span class="topic-tag">Economics</span>
+          </div>
+          <div class="module-arrow">→</div>
+        </a>
+        
+        <a href="6-smart-contracts.html" class="module-card module-6">
+          <div class="module-number">06</div>
+          <div class="module-icon">📜</div>
+          <div class="module-title">Smart Contracts</div>
+          <div class="module-description">Programmable money: when rules and payments become one. IF this happens, THEN move money — automatically.</div>
+          <div class="module-topics">
+            <span class="topic-tag">Automation</span>
+            <span class="topic-tag">IF-THEN Logic</span>
+            <span class="topic-tag">CU Applications</span>
+          </div>
+          <div class="module-arrow">→</div>
+        </a>
+      </div>
+    </div>
+    
+    <footer>
+      <div class="duration">
+        <span>⏱️</span>
+        <span>2 Hour Session</span>
+      </div>
+      <p>Click any module to begin, or press SPACE to start with Module 1</p>
+    </footer>
+  </div>
+  
+  <div class="start-prompt">
+    Press <kbd>SPACE</kbd> to begin the workshop
+  </div>
+  
+  <script>
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        window.location.href = '1-stablecoin-flow.html';
+      }
+    });
+  </script>
+</body>
+</html>

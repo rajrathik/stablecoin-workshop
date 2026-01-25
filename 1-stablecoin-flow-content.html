@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How Stablecoins Actually Flow</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      min-height: 100vh;
+      color: #f1f5f9;
+      overflow-x: hidden;
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+    
+    h1 {
+      font-size: 3rem;
+      font-weight: 300;
+      letter-spacing: -1px;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, #60a5fa, #34d399);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .subtitle {
+      font-size: 1.2rem;
+      color: #94a3b8;
+    }
+    
+    .instruction {
+      background: rgba(59, 130, 246, 0.1);
+      border: 1px solid rgba(59, 130, 246, 0.3);
+      border-radius: 12px;
+      padding: 16px 24px;
+      margin-bottom: 40px;
+      text-align: center;
+      font-size: 1.1rem;
+      color: #93c5fd;
+    }
+    
+    .instruction kbd {
+      background: #334155;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-family: inherit;
+      border: 1px solid #475569;
+    }
+    
+    /* Flow diagram */
+    .flow-container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+    
+    .flow-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .card {
+      background: #1e293b;
+      border-radius: 16px;
+      padding: 24px;
+      width: 260px;
+      min-height: 280px;
+      border: 2px solid #334155;
+      position: relative;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+    }
+    
+    .card.visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    
+    .card.highlight {
+      border-color: #3b82f6;
+      box-shadow: 0 0 40px rgba(59, 130, 246, 0.3);
+    }
+    
+    .card-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+    
+    .card-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: #64748b;
+      margin-bottom: 8px;
+    }
+    
+    .card-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    
+    .card-content {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      line-height: 1.6;
+    }
+    
+    .card-content ul {
+      list-style: none;
+      margin-top: 12px;
+    }
+    
+    .card-content li {
+      padding: 6px 0;
+      border-bottom: 1px solid #334155;
+    }
+    
+    .card-content li:last-child {
+      border-bottom: none;
+    }
+    
+    .fee-badge {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #000;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-top: 16px;
+      display: inline-block;
+    }
+    
+    .no-fee-badge {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-top: 16px;
+      display: inline-block;
+    }
+    
+    /* Arrow connectors */
+    .arrow {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px 0;
+      opacity: 0;
+      transition: all 0.5s ease;
+    }
+    
+    .arrow.visible {
+      opacity: 1;
+    }
+    
+    .arrow-line {
+      width: 80px;
+      height: 4px;
+      background: linear-gradient(90deg, #3b82f6, #60a5fa);
+      border-radius: 2px;
+      position: relative;
+    }
+    
+    .arrow-line::after {
+      content: '';
+      position: absolute;
+      right: -8px;
+      top: -6px;
+      border: 8px solid transparent;
+      border-left-color: #60a5fa;
+    }
+    
+    .arrow-text {
+      font-size: 0.85rem;
+      color: #60a5fa;
+      margin-top: 8px;
+      font-weight: 500;
+    }
+    
+    /* Special card styles */
+    .card.bank {
+      border-color: #3b82f6;
+      background: linear-gradient(135deg, #1e3a5f 0%, #1e293b 100%);
+    }
+    
+    .card.onramp {
+      border-color: #8b5cf6;
+      background: linear-gradient(135deg, #4c1d95 0%, #1e293b 100%);
+    }
+    
+    .card.issuer {
+      border-color: #10b981;
+      background: linear-gradient(135deg, #064e3b 0%, #1e293b 100%);
+    }
+    
+    .card.wallet {
+      border-color: #f59e0b;
+      background: linear-gradient(135deg, #78350f 0%, #1e293b 100%);
+    }
+    
+    /* Provider pills */
+    .providers {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    
+    .provider-pill {
+      background: rgba(255,255,255,0.1);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      color: #e2e8f0;
+    }
+    
+    /* Wallet options */
+    .wallet-options {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    
+    .wallet-pill {
+      background: rgba(255,255,255,0.1);
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      color: #e2e8f0;
+      text-align: center;
+    }
+    
+    /* Key insight panel */
+    .insight-panel {
+      background: rgba(16, 185, 129, 0.1);
+      border: 2px solid #10b981;
+      border-radius: 16px;
+      padding: 30px;
+      margin-top: 40px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.6s ease;
+    }
+    
+    .insight-panel.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .insight-panel h3 {
+      color: #34d399;
+      font-size: 1.3rem;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .insight-panel p {
+      font-size: 1.1rem;
+      line-height: 1.7;
+      color: #d1fae5;
+    }
+    
+    .insight-panel strong {
+      color: #fff;
+    }
+    
+    /* Progress indicator */
+    .progress {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 12px;
+      background: rgba(30, 41, 59, 0.9);
+      padding: 16px 24px;
+      border-radius: 40px;
+      border: 1px solid #334155;
+      backdrop-filter: blur(10px);
+    }
+    
+    .progress-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #334155;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    
+    .progress-dot.active {
+      background: #3b82f6;
+      box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+    }
+    
+    .progress-dot:hover {
+      transform: scale(1.2);
+    }
+    
+    /* Reset button */
+    .reset-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #334155;
+      border: none;
+      color: #94a3b8;
+      padding: 12px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+    }
+    
+    .reset-btn:hover {
+      background: #475569;
+      color: #fff;
+    }
+    
+    /* Step counter */
+    .step-counter {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(30, 41, 59, 0.9);
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 1rem;
+      color: #94a3b8;
+      border: 1px solid #334155;
+    }
+    
+    .step-counter span {
+      color: #3b82f6;
+      font-weight: 600;
+    }
+    
+    /* Animations */
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+      50% { box-shadow: 0 0 40px rgba(59, 130, 246, 0.6); }
+    }
+    
+    .card.highlight {
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes flowArrow {
+      0% { transform: translateX(-5px); opacity: 0.5; }
+      50% { transform: translateX(5px); opacity: 1; }
+      100% { transform: translateX(-5px); opacity: 0.5; }
+    }
+    
+    .arrow.visible .arrow-line {
+      animation: flowArrow 1.5s infinite;
+    }
+    
+    /* Mobile responsive */
+    @media (max-width: 1200px) {
+      .flow-container {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .arrow {
+        transform: rotate(90deg);
+      }
+      
+      .flow-step {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <nav style="position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155;">
+    <a href="index.html" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">← Workshop Home</a>
+    <span style="color: #93c5fd; font-size: 0.85rem; background: rgba(59, 130, 246, 0.2); padding: 6px 14px; border-radius: 20px;">Module 1: How Stablecoins Flow</span>
+    <a href="2-wallets-vs-networks.html" style="color: #4ade80; text-decoration: none; font-size: 0.9rem;">Next: Wallets vs Networks →</a>
+  </nav>
+  
+  <div class="container" style="padding-top: 70px;">
+    <header>
+      <h1>How Stablecoins Actually Flow</h1>
+      <p class="subtitle">Understanding wallets, on-ramps, and issuers</p>
+    </header>
+    
+    <div class="instruction">
+      Press <kbd>SPACE</kbd> or <kbd>→</kbd> to reveal each step &nbsp;|&nbsp; Press <kbd>←</kbd> to go back &nbsp;|&nbsp; Press <kbd>R</kbd> to reset
+    </div>
+    
+    <div class="flow-container">
+      <!-- Step 1: Your Bank -->
+      <div class="flow-step">
+        <div class="card bank" id="card-1">
+          <span class="card-icon">🏦</span>
+          <span class="card-label">Starting Point</span>
+          <h2 class="card-title">Your Bank</h2>
+          <div class="card-content">
+            <p>Traditional dollars sitting in your checking or savings account.</p>
+            <ul>
+              <li>FDIC insured</li>
+              <li>Familiar, trusted</li>
+              <li>Slow to move internationally</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class="arrow" id="arrow-1">
+        <div class="arrow-line"></div>
+        <span class="arrow-text">$100</span>
+      </div>
+      
+      <!-- Step 2: On-Ramp Providers -->
+      <div class="flow-step">
+        <div class="card onramp" id="card-2">
+          <span class="card-icon">🔄</span>
+          <span class="card-label">The Bridge</span>
+          <h2 class="card-title">On-Ramp Providers</h2>
+          <div class="card-content">
+            <p>Companies that convert your bank dollars into crypto.</p>
+            <div class="providers">
+              <span class="provider-pill">Coinbase</span>
+              <span class="provider-pill">MoonPay</span>
+              <span class="provider-pill">Transak</span>
+              <span class="provider-pill">Stripe</span>
+            </div>
+          </div>
+          <div class="fee-badge">💰 Fee: 1-3%</div>
+        </div>
+      </div>
+      
+      <div class="arrow" id="arrow-2">
+        <div class="arrow-line"></div>
+        <span class="arrow-text">$97-99</span>
+      </div>
+      
+      <!-- Step 3: Circle (Issuer) -->
+      <div class="flow-step">
+        <div class="card issuer" id="card-3">
+          <span class="card-icon">🏛️</span>
+          <span class="card-label">The Issuer</span>
+          <h2 class="card-title">Circle</h2>
+          <div class="card-content">
+            <p>The company that actually creates USDC tokens.</p>
+            <ul>
+              <li>Receives your $100</li>
+              <li>Issues 100 USDC tokens</li>
+              <li>Holds reserves in T-Bills</li>
+              <li>Earns yield on reserves</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <div class="arrow" id="arrow-3">
+        <div class="arrow-line"></div>
+        <span class="arrow-text">100 USDC</span>
+      </div>
+      
+      <!-- Step 4: Your Wallet -->
+      <div class="flow-step">
+        <div class="card wallet" id="card-4">
+          <span class="card-icon">👛</span>
+          <span class="card-label">The Window</span>
+          <h2 class="card-title">Your Wallet</h2>
+          <div class="card-content">
+            <p>Just software that holds your keys. Any of these work:</p>
+            <div class="wallet-options">
+              <span class="wallet-pill">Coinbase Wallet</span>
+              <span class="wallet-pill">Phantom</span>
+              <span class="wallet-pill">MetaMask</span>
+            </div>
+          </div>
+          <div class="no-fee-badge">✓ No fees, no reserves</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Key Insight Panel -->
+    <div class="insight-panel" id="insight">
+      <h3>💡 The Key Insight</h3>
+      <p>
+        <strong>Wallets don't issue USDC or hold your dollars.</strong> They're just windows to the blockchain. 
+        Circle holds the reserves. On-ramps charge for the conversion. 
+        <strong>You can switch wallets anytime</strong> — your 12 words work everywhere. 
+        The same USDC, same blockchain, same Circle reserves — regardless of which wallet app you use.
+      </p>
+    </div>
+  </div>
+  
+  <!-- Progress dots -->
+  <div class="progress">
+    <div class="progress-dot" data-step="1"></div>
+    <div class="progress-dot" data-step="2"></div>
+    <div class="progress-dot" data-step="3"></div>
+    <div class="progress-dot" data-step="4"></div>
+    <div class="progress-dot" data-step="5"></div>
+  </div>
+  
+  <!-- Step counter -->
+  <div class="step-counter">
+    Step <span id="current-step">0</span> / 5
+  </div>
+  
+  <!-- Reset button -->
+  <button class="reset-btn" onclick="resetPresentation()">↺ Reset</button>
+  
+  <script>
+    let currentStep = 0;
+    const totalSteps = 5;
+    
+    const elements = [
+      { card: 'card-1', arrow: null },
+      { card: 'card-2', arrow: 'arrow-1' },
+      { card: 'card-3', arrow: 'arrow-2' },
+      { card: 'card-4', arrow: 'arrow-3' },
+      { card: 'insight', arrow: null }
+    ];
+    
+    function showStep(step) {
+      // Remove highlight from all cards
+      document.querySelectorAll('.card').forEach(c => c.classList.remove('highlight'));
+      
+      // Show elements up to current step
+      for (let i = 0; i < step; i++) {
+        const el = elements[i];
+        if (el.card) {
+          const card = document.getElementById(el.card);
+          card.classList.add('visible');
+        }
+        if (el.arrow) {
+          document.getElementById(el.arrow).classList.add('visible');
+        }
+      }
+      
+      // Highlight current card
+      if (step > 0 && step <= elements.length) {
+        const currentEl = elements[step - 1];
+        if (currentEl.card && currentEl.card !== 'insight') {
+          document.getElementById(currentEl.card).classList.add('highlight');
+        }
+        if (currentEl.card === 'insight') {
+          document.getElementById('insight').classList.add('visible');
+        }
+      }
+      
+      // Hide elements after current step
+      for (let i = step; i < elements.length; i++) {
+        const el = elements[i];
+        if (el.card) {
+          const card = document.getElementById(el.card);
+          card.classList.remove('visible');
+          card.classList.remove('highlight');
+        }
+        if (el.arrow) {
+          document.getElementById(el.arrow).classList.remove('visible');
+        }
+      }
+      
+      // Update progress dots
+      document.querySelectorAll('.progress-dot').forEach((dot, index) => {
+        dot.classList.toggle('active', index < step);
+      });
+      
+      // Update step counter
+      document.getElementById('current-step').textContent = step;
+    }
+    
+    function nextStep() {
+      if (currentStep < totalSteps) {
+        currentStep++;
+        showStep(currentStep);
+      }
+    }
+    
+    function prevStep() {
+      if (currentStep > 0) {
+        currentStep--;
+        showStep(currentStep);
+      }
+    }
+    
+    function resetPresentation() {
+      currentStep = 0;
+      showStep(0);
+    }
+    
+    function goToStep(step) {
+      currentStep = step;
+      showStep(step);
+    }
+    
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' || e.code === 'ArrowRight' || e.code === 'ArrowDown') {
+        e.preventDefault();
+        nextStep();
+      } else if (e.code === 'ArrowLeft' || e.code === 'ArrowUp') {
+        e.preventDefault();
+        prevStep();
+      } else if (e.code === 'KeyR') {
+        resetPresentation();
+      }
+    });
+    
+    // Click on progress dots
+    document.querySelectorAll('.progress-dot').forEach(dot => {
+      dot.addEventListener('click', () => {
+        const step = parseInt(dot.dataset.step);
+        goToStep(step);
+      });
+    });
+    
+    // Click anywhere to advance (optional)
+    document.body.addEventListener('click', (e) => {
+      if (e.target.closest('.progress') || e.target.closest('.reset-btn')) return;
+      nextStep();
+    });
+    
+    // Initialize
+    showStep(0);
+  </script>
+</body>
+</html>

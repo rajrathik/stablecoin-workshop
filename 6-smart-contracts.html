@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Contracts: Programmable Money</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      min-height: 100vh;
+      color: #f1f5f9;
+    }
+    
+    .nav {
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      position: sticky;
+      top: 0;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+    }
+    
+    .nav-back {
+      color: #64748b;
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.3s ease;
+    }
+    
+    .nav-back:hover { color: #f1f5f9; }
+    
+    .nav-module {
+      background: rgba(139, 92, 246, 0.2);
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      color: #c4b5fd;
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px 100px;
+    }
+    
+    .hero {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    
+    .hero-badge {
+      display: inline-block;
+      background: rgba(139, 92, 246, 0.2);
+      border: 1px solid rgba(139, 92, 246, 0.4);
+      padding: 8px 20px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      color: #c4b5fd;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+    
+    h1 {
+      font-size: 3rem;
+      font-weight: 300;
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+    
+    h1 span {
+      background: linear-gradient(135deg, #c4b5fd, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 400;
+    }
+    
+    .subtitle {
+      font-size: 1.2rem;
+      color: #94a3b8;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    
+    /* Section styling */
+    .section {
+      margin-bottom: 50px;
+    }
+    
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #334155;
+    }
+    
+    .section-icon {
+      font-size: 1.5rem;
+    }
+    
+    .section-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+    
+    /* Big idea box */
+    .big-idea {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(139, 92, 246, 0.05));
+      border: 2px solid rgba(139, 92, 246, 0.4);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      margin: 30px 0;
+    }
+    
+    .big-idea p {
+      font-size: 1.4rem;
+      color: #e2e8f0;
+      line-height: 1.6;
+      font-weight: 300;
+    }
+    
+    .big-idea strong {
+      color: #c4b5fd;
+    }
+    
+    .one-liner {
+      background: rgba(139, 92, 246, 0.2);
+      border-radius: 12px;
+      padding: 20px 28px;
+      margin-top: 20px;
+      display: inline-block;
+    }
+    
+    .one-liner p {
+      font-size: 1.1rem !important;
+      color: #c4b5fd !important;
+      font-style: italic;
+    }
+    
+    /* IF-THEN boxes */
+    .if-then-grid {
+      display: grid;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    
+    .if-then-box {
+      border-radius: 16px;
+      padding: 24px;
+      border: 2px solid;
+    }
+    
+    .if-then-box.green {
+      background: rgba(16, 185, 129, 0.1);
+      border-color: rgba(16, 185, 129, 0.4);
+    }
+    
+    .if-then-box.purple {
+      background: rgba(139, 92, 246, 0.1);
+      border-color: rgba(139, 92, 246, 0.4);
+    }
+    
+    .if-then-box.gold {
+      background: rgba(245, 158, 11, 0.1);
+      border-color: rgba(245, 158, 11, 0.4);
+    }
+    
+    .if-then-box.blue {
+      background: rgba(59, 130, 246, 0.1);
+      border-color: rgba(59, 130, 246, 0.4);
+    }
+    
+    .if-then-line {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    
+    .if-then-line:last-child {
+      margin-bottom: 0;
+    }
+    
+    .if-then-keyword {
+      font-weight: 700;
+      font-size: 0.9rem;
+      min-width: 50px;
+    }
+    
+    .if-then-box.green .if-then-keyword { color: #6ee7b7; }
+    .if-then-box.purple .if-then-keyword { color: #c4b5fd; }
+    .if-then-box.gold .if-then-keyword { color: #fcd34d; }
+    .if-then-box.blue .if-then-keyword { color: #93c5fd; }
+    
+    .if-then-text {
+      color: #e2e8f0;
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+    
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+      margin: 20px 0;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th {
+      background: rgba(139, 92, 246, 0.2);
+      padding: 14px 16px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #c4b5fd;
+      border-bottom: 2px solid #8b5cf6;
+    }
+    
+    td {
+      padding: 14px 16px;
+      border-bottom: 1px solid #334155;
+      font-size: 0.95rem;
+      color: #e2e8f0;
+    }
+    
+    tr:hover td {
+      background: rgba(139, 92, 246, 0.05);
+    }
+    
+    /* Today's examples */
+    .today-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+    
+    .today-card {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 20px;
+    }
+    
+    .today-card-title {
+      font-weight: 600;
+      color: #c4b5fd;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+    
+    .today-card-logic {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      margin-bottom: 8px;
+      font-style: italic;
+    }
+    
+    .today-card-problem {
+      font-size: 0.85rem;
+      color: #f87171;
+    }
+    
+    /* CU Applications */
+    .cu-grid {
+      display: grid;
+      gap: 16px;
+      margin: 24px 0;
+    }
+    
+    .cu-item {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    
+    .cu-number {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+    
+    .cu-content {
+      flex: 1;
+    }
+    
+    .cu-title {
+      font-weight: 600;
+      color: #c4b5fd;
+      margin-bottom: 6px;
+    }
+    
+    .cu-logic {
+      font-size: 0.9rem;
+      color: #94a3b8;
+      font-family: 'Courier New', monospace;
+    }
+    
+    /* Key insight */
+    .key-insight {
+      background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(59, 130, 246, 0.1));
+      border: 2px solid rgba(139, 92, 246, 0.4);
+      border-radius: 20px;
+      padding: 32px;
+      margin: 40px 0;
+    }
+    
+    .key-insight-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #c4b5fd;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .key-insight-text {
+      font-size: 1.1rem;
+      color: #e2e8f0;
+      line-height: 1.7;
+    }
+    
+    /* Final quote */
+    .final-quote {
+      text-align: center;
+      padding: 40px;
+      background: rgba(30, 41, 59, 0.4);
+      border-radius: 20px;
+      margin-top: 40px;
+    }
+    
+    .final-quote p {
+      font-size: 1.5rem;
+      font-weight: 300;
+      color: #c4b5fd;
+      font-style: italic;
+    }
+    
+    /* Navigation footer */
+    .nav-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(15, 23, 42, 0.95);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid #334155;
+      padding: 16px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border-radius: 30px;
+      font-size: 0.95rem;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-btn.prev {
+      background: rgba(255,255,255,0.05);
+      color: #94a3b8;
+    }
+    
+    .nav-btn.prev:hover {
+      background: rgba(255,255,255,0.1);
+      color: #f1f5f9;
+    }
+    
+    .nav-btn.next {
+      background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+      color: white;
+    }
+    
+    .nav-btn.next:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+    }
+    
+    .progress-dots {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .progress-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #334155;
+    }
+    
+    .progress-dot.active {
+      background: #8b5cf6;
+    }
+    
+    @media (max-width: 700px) {
+      h1 { font-size: 2rem; }
+      .big-idea { padding: 24px; }
+      .big-idea p { font-size: 1.1rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html" class="nav-back">← Back to Overview</a>
+    <span class="nav-module">Deep Dive: Smart Contracts</span>
+  </nav>
+  
+  <div class="container">
+    <div class="hero">
+      <div class="hero-badge">📜 Programmable Money</div>
+      <h1>Smart Contracts: <span>Rules + Payments</span></h1>
+      <p class="subtitle">When agreements and money become one — executing automatically, without middlemen.</p>
+    </div>
+    
+    <!-- The Big Idea -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">💡</span>
+        <h2 class="section-title">The Big Idea</h2>
+      </div>
+      
+      <div class="big-idea">
+        <p>A smart contract is simply: <strong>rules written as software</strong> that automatically move money when conditions are met.</p>
+        <p style="margin-top: 16px;">No paperwork. No waiting for approvals. No middleman. The code runs, the money moves.</p>
+        
+        <div class="one-liner">
+          <p>"IF this happens, THEN move money" — and it executes itself.</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Everyday Examples -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">📱</span>
+        <h2 class="section-title">Everyday Examples You Already Know</h2>
+      </div>
+      
+      <p style="color: #94a3b8; margin-bottom: 20px;">You use "dumb" versions of smart contracts every day:</p>
+      
+      <div class="today-grid">
+        <div class="today-card">
+          <div class="today-card-title">💵 Direct Deposit</div>
+          <div class="today-card-logic">IF it's the 15th, THEN deposit paycheck</div>
+          <div class="today-card-problem">❌ Employer & bank must coordinate; delays happen</div>
+        </div>
+        <div class="today-card">
+          <div class="today-card-title">🔁 Autopay</div>
+          <div class="today-card-logic">IF bill is due, THEN pay from my account</div>
+          <div class="today-card-problem">❌ Biller & bank must connect; payments can fail</div>
+        </div>
+        <div class="today-card">
+          <div class="today-card-title">🏠 Escrow</div>
+          <div class="today-card-logic">IF closing happens, THEN release funds</div>
+          <div class="today-card-problem">❌ Lawyers, banks, title companies all involved</div>
+        </div>
+        <div class="today-card">
+          <div class="today-card-title">🛡️ Insurance Claim</div>
+          <div class="today-card-logic">IF damage verified, THEN pay claim</div>
+          <div class="today-card-problem">❌ Adjusters, approvals, weeks of waiting</div>
+        </div>
+      </div>
+      
+      <p style="color: #c4b5fd; font-size: 1.1rem; margin-top: 24px; text-align: center;">
+        <strong>Smart contracts do the same thing</strong> — but the rule and the money live together on the blockchain. No coordination needed.
+      </p>
+    </div>
+    
+    <!-- Real Smart Contract Examples -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">⚡</span>
+        <h2 class="section-title">Smart Contract Examples</h2>
+      </div>
+      
+      <div class="if-then-grid">
+        <div class="if-then-box green">
+          <div class="if-then-line">
+            <span class="if-then-keyword">IF</span>
+            <span class="if-then-text">freelancer delivers approved work</span>
+          </div>
+          <div class="if-then-line">
+            <span class="if-then-keyword">THEN</span>
+            <span class="if-then-text">instantly release $5,000 USDC to their wallet</span>
+          </div>
+        </div>
+        
+        <div class="if-then-box purple">
+          <div class="if-then-line">
+            <span class="if-then-keyword">IF</span>
+            <span class="if-then-text">flight is delayed more than 2 hours (verified by oracle)</span>
+          </div>
+          <div class="if-then-line">
+            <span class="if-then-keyword">THEN</span>
+            <span class="if-then-text">automatically pay $200 USDC to passenger's wallet</span>
+          </div>
+        </div>
+        
+        <div class="if-then-box gold">
+          <div class="if-then-line">
+            <span class="if-then-keyword">IF</span>
+            <span class="if-then-text">loan payment is 30 days late</span>
+          </div>
+          <div class="if-then-line">
+            <span class="if-then-keyword">THEN</span>
+            <span class="if-then-text">transfer collateral to lender's wallet</span>
+          </div>
+        </div>
+        
+        <div class="if-then-box blue">
+          <div class="if-then-line">
+            <span class="if-then-keyword">IF</span>
+            <span class="if-then-text">child turns 18 (verified by date)</span>
+          </div>
+          <div class="if-then-line">
+            <span class="if-then-keyword">THEN</span>
+            <span class="if-then-text">release trust fund to their wallet</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Comparison Table -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">⚖️</span>
+        <h2 class="section-title">Traditional Contract vs. Smart Contract</h2>
+      </div>
+      
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Aspect</th>
+              <th>Traditional Contract</th>
+              <th>Smart Contract</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Format</strong></td>
+              <td>Paper or PDF document</td>
+              <td>Computer code on blockchain</td>
+            </tr>
+            <tr>
+              <td><strong>Enforcement</strong></td>
+              <td>Courts, lawyers, lawsuits</td>
+              <td>Automatic — code executes itself</td>
+            </tr>
+            <tr>
+              <td><strong>Payment</strong></td>
+              <td>Separate step after agreement</td>
+              <td>Built into the contract itself</td>
+            </tr>
+            <tr>
+              <td><strong>Trust</strong></td>
+              <td>Trust the other party will pay</td>
+              <td>Trust the code — it can't NOT pay</td>
+            </tr>
+            <tr>
+              <td><strong>Speed</strong></td>
+              <td>Days to weeks</td>
+              <td>Seconds</td>
+            </tr>
+            <tr>
+              <td><strong>Cost</strong></td>
+              <td>Legal fees, bank fees</td>
+              <td>Small network fee ($0.01-$2)</td>
+            </tr>
+            <tr>
+              <td><strong>Disputes</strong></td>
+              <td>Go to court</td>
+              <td>No disputes — code is final</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    
+    <!-- Credit Union Applications -->
+    <div class="section">
+      <div class="section-header">
+        <span class="section-icon">🏦</span>
+        <h2 class="section-title">Credit Union Applications</h2>
+      </div>
+      
+      <p style="color: #94a3b8; margin-bottom: 20px;">Imagine these processes running automatically:</p>
+      
+      <div class="cu-grid">
+        <div class="cu-item">
+          <div class="cu-number">1</div>
+          <div class="cu-content">
+            <div class="cu-title">Loan Disbursement</div>
+            <div class="cu-logic">IF loan approved AND documents signed → release funds instantly</div>
+          </div>
+        </div>
+        
+        <div class="cu-item">
+          <div class="cu-number">2</div>
+          <div class="cu-content">
+            <div class="cu-title">CD Maturity</div>
+            <div class="cu-logic">IF CD term ends → transfer principal + interest to member's wallet</div>
+          </div>
+        </div>
+        
+        <div class="cu-item">
+          <div class="cu-number">3</div>
+          <div class="cu-content">
+            <div class="cu-title">Payroll Processing</div>
+            <div class="cu-logic">IF payday → split deposit: 70% checking, 20% savings, 10% investment</div>
+          </div>
+        </div>
+        
+        <div class="cu-item">
+          <div class="cu-number">4</div>
+          <div class="cu-content">
+            <div class="cu-title">Vendor Payments</div>
+            <div class="cu-logic">IF invoice confirmed AND 30 days passed → pay vendor automatically</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Key Insight -->
+    <div class="key-insight">
+      <div class="key-insight-title">🎯 The Key Insight</div>
+      <div class="key-insight-text">
+        Traditional finance separates the <strong>agreement</strong> (contract) from the <strong>action</strong> (payment). 
+        <br><br>
+        Smart contracts merge them — the agreement <strong>IS</strong> the payment instruction. When conditions are met, money moves. No approval queues, no processing delays, no "the check is in the mail."
+      </div>
+    </div>
+    
+    <!-- Final Quote -->
+    <div class="final-quote">
+      <p>"Contract + Payment = One Atomic Action"</p>
+    </div>
+  </div>
+  
+  <div class="nav-footer">
+    <a href="5-miners-validators.html" class="nav-btn prev">← Miners & Validators</a>
+    <div class="progress-dots">
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot"></div>
+      <div class="progress-dot active"></div>
+    </div>
+    <a href="index.html" class="nav-btn next">Back to Overview →</a>
+  </div>
+  
+  <script>
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'ArrowRight') {
+        window.location.href = 'index.html';
+      } else if (e.code === 'ArrowLeft') {
+        window.location.href = '5-miners-validators.html';
+      }
+    });
+  </script>
+</body>
+</html>
