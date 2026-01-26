@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <link rel="stylesheet" href="styles.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Stablecoin Workshop | For Banking Professionals</title>
@@ -20,7 +19,6 @@
       overflow-x: hidden;
     }
     
-    /* Animated background */
     .bg-animation {
       position: fixed;
       top: 0;
@@ -45,7 +43,6 @@
       flex-direction: column;
     }
     
-    /* Header */
     header {
       text-align: center;
       margin-bottom: 60px;
@@ -88,7 +85,6 @@
       line-height: 1.6;
     }
     
-    /* Module cards */
     .modules-section {
       flex: 1;
       display: flex;
@@ -238,7 +234,6 @@
       transform: translateX(4px);
     }
     
-    /* Hands-on section */
     .handson-section {
       background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
       border: 2px solid rgba(139, 92, 246, 0.3);
@@ -290,7 +285,6 @@
       font-size: 0.95rem;
     }
     
-    /* Footer */
     footer {
       text-align: center;
       padding-top: 40px;
@@ -307,33 +301,6 @@
       border-radius: 30px;
       margin-bottom: 12px;
     }
-    
-    /* Start button animation */
-    @keyframes pulse-glow {
-      0%, 100% { box-shadow: 0 0 20px rgba(74, 222, 128, 0.3); }
-      50% { box-shadow: 0 0 40px rgba(74, 222, 128, 0.5); }
-    }
-    
-    .start-prompt {
-      position: fixed;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.4);
-      padding: 14px 28px;
-      border-radius: 40px;
-      color: #4ade80;
-      font-size: 0.95rem;
-      animation: pulse-glow 2s infinite;
-    }
-    
-    .start-prompt kbd {
-      background: rgba(16, 185, 129, 0.2);
-      padding: 4px 10px;
-      border-radius: 6px;
-      margin: 0 4px;
-    }
   </style>
 </head>
 <body>
@@ -341,9 +308,9 @@
   
   <div class="container">
     <header>
-      <div class="workshop-badge">Interactive Workshop</div>
+      <div class="workshop-badge">Workshop</div>
       <h1>Understanding <span class="highlight">Stablecoins</span></h1>
-      <p class="tagline">A hands-on learning experience for banking professionals. Less slides, more doing.</p>
+      <p class="tagline">A hands-on learning experience for credit union and banking professionals.</p>
     </header>
     
     <div class="modules-section">
@@ -356,7 +323,7 @@
           <div class="module-number">01</div>
           <div class="module-icon">🔄</div>
           <div class="module-title">How Stablecoins Flow</div>
-          <div class="module-description">Trace a dollar from your bank account to USDC. Understand who does what — and who makes money where.</div>
+          <div class="module-description">Trace a dollar from your bank account to USDC. Understand who does what and who makes money where.</div>
           <div class="module-topics">
             <span class="topic-tag">On-ramps</span>
             <span class="topic-tag">Circle</span>
@@ -370,7 +337,7 @@
           <div class="module-number">02</div>
           <div class="module-icon">⚡</div>
           <div class="module-title">Wallets vs Networks</div>
-          <div class="module-description">Why are some transactions free and others cost $5? Understand the infrastructure layer.</div>
+          <div class="module-description">Why two seemingly similar blockchain transactions have drastically different costs? Understand the infrastructure layer.</div>
           <div class="module-topics">
             <span class="topic-tag">Ethereum</span>
             <span class="topic-tag">Solana</span>
@@ -384,7 +351,7 @@
           <div class="module-number">03</div>
           <div class="module-icon">🏦</div>
           <div class="module-title">Banking Parallels</div>
-          <div class="module-description">Map everything you just learned to concepts you already know. Where's the disruption?</div>
+          <div class="module-description">Connect what we just covered to systems we already understand—payments, banking, and networks. What exactly is blockchain disrupting?</div>
           <div class="module-topics">
             <span class="topic-tag">SWIFT vs Solana</span>
             <span class="topic-tag">Yield</span>
@@ -396,7 +363,7 @@
       
       <div class="handson-section">
         <h3>🛠️ Then: Hands-On Lab</h3>
-        <p>After the concepts, you'll create your own wallet and send real stablecoins</p>
+        <p>After the concepts, we will create our own wallet and send real stablecoins</p>
         <div class="handson-steps">
           <div class="handson-step">
             <div class="step-number">1</div>
@@ -417,7 +384,6 @@
         </div>
       </div>
       
-      <!-- Deep Dive Section -->
       <div class="modules-header" style="margin-top: 50px;">
         <h2>Deep Dive Topics</h2>
       </div>
@@ -467,24 +433,10 @@
     <footer>
       <div class="duration">
         <span>⏱️</span>
-        <span>2 Hour Session</span>
+        <span>Interactive Session</span>
       </div>
-      <p>Click any module to begin, or press SPACE to start with Module 1</p>
+      <p>Click any module to begin</p>
     </footer>
   </div>
-  
-  <div class="start-prompt">
-    Press <kbd>SPACE</kbd> to begin the workshop
-  </div>
-  
-  <script>
-    // Keyboard navigation
-    document.addEventListener('keydown', (e) => {
-      if (e.code === 'Space') {
-        e.preventDefault();
-        window.location.href = '1-stablecoin-flow.html';
-      }
-    });
-  </script>
 </body>
 </html>

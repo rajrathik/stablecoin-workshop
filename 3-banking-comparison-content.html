@@ -767,10 +767,8 @@
 </head>
 <body>
   <!-- Navigation Bar -->
-  <nav style="position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(26, 26, 46, 0.95); backdrop-filter: blur(10px); padding: 12px 24px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155;">
-    <a href="2-wallets-vs-networks.html" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">← Module 2</a>
-    <span style="color: #6ee7b7; font-size: 0.85rem; background: rgba(16, 185, 129, 0.2); padding: 6px 14px; border-radius: 20px;">Module 3: Banking Parallels</span>
-    <a href="index.html" style="color: #a78bfa; text-decoration: none; font-size: 0.9rem;">🛠️ Hands-On Lab →</a>
+  <nav style="position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(26, 26, 46, 0.95); backdrop-filter: blur(10px); padding: 12px 24px; display: flex; justify-content: center; align-items: center; border-bottom: 1px solid #334155;">
+    <a href="index.html" style="color: #64748b; text-decoration: none; font-size: 0.9rem;">← Back to Overview</a>
   </nav>
   
   <div class="container" style="padding-top: 70px;">
@@ -778,10 +776,6 @@
       <h1>Traditional Banking vs Stablecoin Rails</h1>
       <p class="subtitle">A side-by-side comparison for banking professionals</p>
     </header>
-    
-    <div class="instruction">
-      Press <kbd>SPACE</kbd> or <kbd>→</kbd> to reveal each section &nbsp;|&nbsp; <kbd>←</kbd> go back &nbsp;|&nbsp; <kbd>R</kbd> reset
-    </div>
     
     <!-- Section 1: The Players - Who Does What -->
     <div class="section" id="section-1">
@@ -1227,24 +1221,20 @@
     
   </div>
   
-  <!-- Progress dots -->
-  <div class="progress">
-    <div class="progress-dot" data-step="1"></div>
-    <div class="progress-dot" data-step="2"></div>
-    <div class="progress-dot" data-step="3"></div>
-    <div class="progress-dot" data-step="4"></div>
-    <div class="progress-dot" data-step="5"></div>
-    <div class="progress-dot" data-step="6"></div>
-    <div class="progress-dot" data-step="7"></div>
+  <!-- Bottom Navigation -->
+  <div class="nav-footer" style="position: fixed; bottom: 0; left: 0; right: 0; padding: 20px 40px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; z-index: 100;">
+    <a href="2-wallets-vs-networks.html" class="nav-btn prev" style="padding: 12px 24px; border-radius: 30px; text-decoration: none; font-size: 0.95rem; font-weight: 500; background: rgba(100, 116, 139, 0.3); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.5);">← Wallets vs Networks</a>
+    <div class="progress" style="display: flex; gap: 10px; padding: 10px 20px; background: rgba(30, 41, 59, 0.8); border-radius: 40px; border: 1px solid #334155;">
+      <div class="progress-dot" data-step="1" style="width: 14px; height: 14px; border-radius: 50%; background: #334155; cursor: pointer;"></div>
+      <div class="progress-dot" data-step="2" style="width: 14px; height: 14px; border-radius: 50%; background: #334155; cursor: pointer;"></div>
+      <div class="progress-dot" data-step="3" style="width: 14px; height: 14px; border-radius: 50%; background: #334155; cursor: pointer;"></div>
+      <div class="progress-dot" data-step="4" style="width: 14px; height: 14px; border-radius: 50%; background: #334155; cursor: pointer;"></div>
+      <div class="progress-dot" data-step="5" style="width: 14px; height: 14px; border-radius: 50%; background: #334155; cursor: pointer;"></div>
+      <div class="progress-dot" data-step="6" style="width: 14px; height: 14px; border-radius: 50%; background: #334155; cursor: pointer;"></div>
+      <div class="progress-dot" data-step="7" style="width: 14px; height: 14px; border-radius: 50%; background: #334155; cursor: pointer;"></div>
+    </div>
+    <a href="4-blockchain-explorer.html" class="nav-btn next" style="padding: 12px 24px; border-radius: 30px; text-decoration: none; font-size: 0.95rem; font-weight: 500; background: linear-gradient(135deg, #10b981, #059669); color: white;">Blockchain Explorer →</a>
   </div>
-  
-  <!-- Step counter -->
-  <div class="step-counter">
-    Step <span id="current-step">0</span> / 7
-  </div>
-  
-  <!-- Reset button -->
-  <button class="reset-btn" onclick="resetPresentation()">↺ Reset</button>
   
   <script>
     let currentStep = 0;
@@ -1277,11 +1267,12 @@
       
       // Update progress dots
       document.querySelectorAll('.progress-dot').forEach((dot, index) => {
-        dot.classList.toggle('active', index < step);
+        if (index < step) {
+          dot.style.background = '#10b981';
+        } else {
+          dot.style.background = '#334155';
+        }
       });
-      
-      // Update step counter
-      document.getElementById('current-step').textContent = step;
     }
     
     function nextStep() {
