@@ -1218,26 +1218,34 @@
         </p>
       </div>
     </div>
-    
   </div>
   
-  <!-- Bottom Navigation -->
+  <!-- Bottom Navigation with table layout -->
   <div class="nav-footer" style="position: fixed; bottom: 0; left: 0; right: 0; padding: 15px 40px; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(10px); border-top: 1px solid rgba(255,255,255,0.1); z-index: 100;">
-    <div style="display: flex; justify-content: center; margin-bottom: 12px;">
-      <div class="progress" style="display: flex; gap: 10px; padding: 10px 20px; background: rgba(30, 41, 59, 0.8); border-radius: 40px; border: 1px solid #334155;">
-        <div class="progress-dot" data-step="1" style="width: 14px; height: 14px; border-radius: 50%; background: #334155; cursor: pointer;"></div>
-        <div class="progress-dot" data-step="2" style="width: 14px; height: 14px; border-radius: 50%; background: #334155; cursor: pointer;"></div>
-        <div class="progress-dot" data-step="3" style="width: 14px; height: 14px; border-radius: 50%; background: #334155; cursor: pointer;"></div>
-        <div class="progress-dot" data-step="4" style="width: 14px; height: 14px; border-radius: 50%; background: #334155; cursor: pointer;"></div>
-        <div class="progress-dot" data-step="5" style="width: 14px; height: 14px; border-radius: 50%; background: #334155; cursor: pointer;"></div>
-        <div class="progress-dot" data-step="6" style="width: 14px; height: 14px; border-radius: 50%; background: #334155; cursor: pointer;"></div>
-        <div class="progress-dot" data-step="7" style="width: 14px; height: 14px; border-radius: 50%; background: #334155; cursor: pointer;"></div>
-      </div>
-    </div>
-    <div style="display: flex; justify-content: space-between;">
-      <a href="2-wallets-vs-networks.html" class="nav-btn prev" style="padding: 12px 24px; border-radius: 30px; text-decoration: none; font-size: 0.95rem; font-weight: 500; background: rgba(100, 116, 139, 0.3); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.5);">← Wallets vs Networks</a>
-      <a href="4-blockchain-explorer.html" class="nav-btn next" style="padding: 12px 24px; border-radius: 30px; text-decoration: none; font-size: 0.95rem; font-weight: 500; background: linear-gradient(135deg, #10b981, #059669); color: white;">Blockchain Explorer →</a>
-    </div>
+    <table style="width: 100%; border-collapse: collapse;">
+      <tr>
+        <td colspan="3" style="text-align: center; padding-bottom: 12px;">
+          <div class="progress-inline" style="display: inline-flex; gap: 10px; padding: 10px 20px; background: rgba(30, 41, 59, 0.8); border-radius: 40px; border: 1px solid #334155;">
+            <div class="progress-dot" data-step="1" style="width: 14px; height: 14px; border-radius: 50%; background: #64748b; cursor: pointer;"></div>
+            <div class="progress-dot" data-step="2" style="width: 14px; height: 14px; border-radius: 50%; background: #64748b; cursor: pointer;"></div>
+            <div class="progress-dot" data-step="3" style="width: 14px; height: 14px; border-radius: 50%; background: #64748b; cursor: pointer;"></div>
+            <div class="progress-dot" data-step="4" style="width: 14px; height: 14px; border-radius: 50%; background: #64748b; cursor: pointer;"></div>
+            <div class="progress-dot" data-step="5" style="width: 14px; height: 14px; border-radius: 50%; background: #64748b; cursor: pointer;"></div>
+            <div class="progress-dot" data-step="6" style="width: 14px; height: 14px; border-radius: 50%; background: #64748b; cursor: pointer;"></div>
+            <div class="progress-dot" data-step="7" style="width: 14px; height: 14px; border-radius: 50%; background: #64748b; cursor: pointer;"></div>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td style="text-align: left;">
+          <a href="2-wallets-vs-networks.html" class="nav-btn prev" style="padding: 12px 24px; border-radius: 30px; text-decoration: none; font-size: 0.95rem; font-weight: 500; background: rgba(100, 116, 139, 0.3); color: #94a3b8; border: 1px solid rgba(100, 116, 139, 0.5);">← Wallets vs Networks</a>
+        </td>
+        <td></td>
+        <td style="text-align: right;">
+          <a href="4-blockchain-explorer.html" class="nav-btn next" style="padding: 12px 24px; border-radius: 30px; text-decoration: none; font-size: 0.95rem; font-weight: 500; background: linear-gradient(135deg, #10b981, #059669); color: white;">Blockchain Explorer →</a>
+        </td>
+      </tr>
+    </table>
   </div>
   
   <script>
@@ -1319,10 +1327,17 @@
     
     // Click on progress dots
     document.querySelectorAll('.progress-dot').forEach(dot => {
-      dot.addEventListener('click', () => {
+      dot.addEventListener('click', (e) => {
+        e.stopPropagation();
         const step = parseInt(dot.dataset.step);
         goToStep(step);
       });
+    });
+    
+    // Click anywhere to advance
+    document.body.addEventListener('click', (e) => {
+      if (e.target.closest('.progress-inline') || e.target.closest('.nav-footer')) return;
+      nextStep();
     });
     
     // Initialize
